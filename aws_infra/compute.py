@@ -20,10 +20,10 @@ ami = aws.ec2.get_ami(
     owners=["125523088429"],
     filters=[{"name": "name", "values": ["fedora-coreos-35.20220327.3.0-x86_64"]}],
 )
-
+resource_prefix = pulumi.Config("resource").require("prefix")
 group = aws.ec2.SecurityGroup(
-    "zpu-test",
-    name="zpu test security group",
+    f"{resource_prefix}-sg",
+    name=f"{resource_prefix}-test security group",
     description="Enable HTTP access",
     ingress=[
         aws.ec2.SecurityGroupIngressArgs(
@@ -50,17 +50,17 @@ group = aws.ec2.SecurityGroup(
             cidr_blocks=["0.0.0.0/0"],
         ),
     ],
-    tags={"Name": "zpu-test-ec2"},
+    tags={"Name": f"{resource_prefix}-ec2"},
 )
 
 server = aws.ec2.Instance(
-    "coreos-ignition-test",
+    f"{resource_prefix}-ec2",
     instance_type=size,
     vpc_security_group_ids=[group.id],  # reference security group from above
     ami=ami.id,
     key_name="zpu-key-pair",
     user_data=read_ign_file("hello.ign"),
-    tags={"Name": "zpu-test-ec2"},
+    tags={"Name": f"{resource_prefix}-ec2"},
 )
 
 pulumi.export("publicIp", server.public_ip)

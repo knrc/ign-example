@@ -3,4 +3,5 @@ runtime:
   name: python
   options:
     virtualenv: venv
+main: pulumi_main.py    
 description: experienmental coreos ignition

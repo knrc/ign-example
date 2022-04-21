@@ -1,0 +1,6 @@
+name: coreos-ign
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: experienmental coreos ignition
